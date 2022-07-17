@@ -1,5 +1,7 @@
 FROM alpine:latest
 
+LABEL org.opencontainers.image.source=https://github.com/agpsn/base
+
 ENV APP_DIR="/app" CONFIG_DIR="/config" PUID="1000" PGID="1000" UMASK="002" TZ="Etc/UTC" ARGS=""
 ENV XDG_CONFIG_HOME="${CONFIG_DIR}/.config" XDG_CACHE_HOME="${CONFIG_DIR}/.cache" XDG_DATA_HOME="${CONFIG_DIR}/.local/share" LANG="C.UTF-8" LC_ALL="C.UTF-8"
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
@@ -24,6 +26,3 @@ ARG S6_ARCH=x86_64
 # install s6-overlay
 RUN curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-noarch.tar.xz" | tar -Jxpf - -C /
 RUN curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" | tar -Jxpf - -C /
-
-
-LABEL org.opencontainers.image.source=https://github.com/agpsn/base
