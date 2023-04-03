@@ -11,42 +11,31 @@
 
 
 #####---#####
-FROM alpine:3.16 as rootfs-stage
-
-# environment
-ENV REL=v3.17 ARCH=x86_64 MIRROR=http://dl-cdn.alpinelinux.org/alpine PACKAGES=alpine-baselayout,alpine-keys,apk-tools,busybox,libc-utils,xz
-
-# install packages
-RUN apk add --no-cache bash curl tzdata xz
-
-# fetch builder script from gliderlabs
-RUN curl -o /mkimage-alpine.bash -L https://raw.githubusercontent.com/gliderlabs/docker-alpine/master/builder/scripts/mkimage-alpine.bash && chmod +x /mkimage-alpine.bash && ./mkimage-alpine.bash  && mkdir /root-out && tar xf /rootfs.tar.xz -C /root-out && sed -i -e 's/^root::/root:!:/' /root-out/etc/shadow
-
-# set version for s6 overlay
-ARG S6_OVERLAY_VERSION="3.1.4.2"
-ARG S6_OVERLAY_ARCH="x86_64"
-
-# add s6 overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz /tmp
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz /tmp
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz /tmp
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-noarch.tar.xz
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz
-RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz
-
-# Runtime stage
-FROM scratch
-COPY --from=rootfs-stage /root-out/ /
-
-# environment variables
-ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " HOME="/root" TERM="xterm" S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" S6_VERBOSITY=1
-
-RUN set -xe && apk update && apk add --no-cache alpine-release bash ca-certificates coreutils curl jq procps shadow tzdata && apk upgrade --no-cache && mkdir /app /config /defaults && useradd -u 1000 -U -d /config -s /bin/false agpsn && usermod -G users agpsn
-
-
-# add local files
+#FROM alpine:3.16 as rootfs-stage
+#ENV REL=v3.17 ARCH=x86_64 MIRROR=http://dl-cdn.alpinelinux.org/alpine PACKAGES=alpine-baselayout,alpine-keys,apk-tools,busybox,libc-utils,xz
+#RUN apk add --no-cache bash curl tzdata xz
+#RUN curl -o /mkimage-alpine.bash -L https://raw.githubusercontent.com/gliderlabs/docker-alpine/master/builder/scripts/mkimage-alpine.bash && chmod +x /mkimage-alpine.bash && ./mkimage-alpine.bash  && mkdir /root-out && tar xf /rootfs.tar.xz -C /root-out && sed -i -e 's/^root::/root:!:/' /root-out/etc/shadow
+#ARG S6_OVERLAY_VERSION="3.1.4.2"
+#ARG S6_OVERLAY_ARCH="x86_64"
+#ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+#ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz /tmp
+#ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz /tmp
+#ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz /tmp
+#RUN tar -C /root-out -Jxpf /tmp/s6-overlay-noarch.tar.xz
+#RUN tar -C /root-out -Jxpf /tmp/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz
+#RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz
+#RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz
+#FROM scratch
+#COPY --from=rootfs-stage /root-out/ /
+#ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " HOME="/root" TERM="xterm" S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" S6_VERBOSITY=1
+#RUN set -xe && apk update && apk add --no-cache alpine-release bash ca-certificates coreutils curl jq procps shadow tzdata && apk upgrade --no-cache && mkdir /app /config /defaults && useradd -u 1000 -U -d /config -s /bin/false agpsn && usermod -G users agpsn
 #COPY root/ /
+#ENTRYPOINT ["/init"]
 
-ENTRYPOINT ["/init"]
+
+FROM alpine:latest
+ARG S6_VERSION=3.1.4.2
+ARG S6_ARCH=x86_64
+
+#RUN set -xe && apk update && apk add --no-cache coreutils curl shadow tzdata xz
+RUN set -xe && apk update && apk add --no-cache tzdata
