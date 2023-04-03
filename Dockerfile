@@ -42,25 +42,10 @@ COPY --from=rootfs-stage /root-out/ /
 # environment variables
 ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " HOME="/root" TERM="xterm" S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" S6_VERBOSITY=1
 
-#RUN \
-#	echo "**** install runtime packages ****" && \
-#	apk add --no-cache alpine-release bash ca-certificates coreutils curl jq netcat-openbsd procps shadow tzdata && \
-#	echo "**** create abc user and make our folders ****" && groupmod -g 1000 users && useradd -u 911 -U -d /config -s /bin/false abc && usermod -G users abc && mkdir -p /app /config /defaults && \
-#	echo "**** cleanup ****" && rm -rf /tmp/*
-
-RUN set -xe && apk update
-#apk add --no-cache alpine-release bash ca-certificates coreutils curl icu-libs jq mediainfo nano p7zip procps python3 sed shadow sqlite-libs tar tree tzdata unzip wget xz && 
-#apk upgrade --no-cache && 
-#mkdir /app /config /defaults && 
-#useradd -u 1000 -U -d /config -s /bin/false agpsn && 
-#usermod -G users agpsn && 
-#curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-noarch.tar.xz" | tar -Jxpf - -C / && 
-#curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" | tar -Jxpf - -C / && 
-#curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-noarch.tar.xz" | tar -Jxpf - -C / && 
-#curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-arch.tar.xz" | tar -Jxpf - -C /
+RUN set -xe && apk update && apk add --no-cache alpine-release bash ca-certificates coreutils curl icu-libs jq mediainfo nano p7zip procps python3 sed shadow sqlite-libs tar tree tzdata unzip wget xz && apk upgrade --no-cache && mkdir /app /config /defaults && useradd -u 1000 -U -d /config -s /bin/false agpsn && usermod -G users agpsn
 
 
 # add local files
 #COPY root/ /
 
-#ENTRYPOINT ["/init"]
+ENTRYPOINT ["/init"]
