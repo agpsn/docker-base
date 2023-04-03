@@ -1,3 +1,4 @@
+#icu-libs mediainfo nano p7zip python3 sed sqlite-libs tar tree unzip wget xz
 #FROM alpine:latest
 #ARG S6_VERSION=3.1.4.1
 #ARG S6_ARCH=x86_64
@@ -42,7 +43,7 @@ COPY --from=rootfs-stage /root-out/ /
 # environment variables
 ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " HOME="/root" TERM="xterm" S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" S6_VERBOSITY=1
 
-RUN set -xe && apk update && apk add --no-cache alpine-release bash ca-certificates coreutils curl icu-libs jq mediainfo nano p7zip procps python3 sed shadow sqlite-libs tar tree tzdata unzip wget xz && apk upgrade --no-cache && mkdir /app /config /defaults && useradd -u 1000 -U -d /config -s /bin/false agpsn && usermod -G users agpsn
+RUN set -xe && apk update && apk add --no-cache alpine-release bash ca-certificates coreutils curl jq procps shadow tzdata && apk upgrade --no-cache && mkdir /app /config /defaults && useradd -u 1000 -U -d /config -s /bin/false agpsn && usermod -G users agpsn
 
 
 # add local files
