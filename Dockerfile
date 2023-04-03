@@ -1,16 +1,68 @@
-FROM alpine:latest
-
-ARG S6_VERSION=3.1.4.1
-ARG S6_ARCH=x86_64
-
-ENV APP_DIR="/app" CONFIG_DIR="/config" PUID="1000" PGID="1000" UMASK="022" TZ="ETC/UTC" ARGS="" XDG_CONFIG_HOME="${CONFIG_DIR}/.config" XDG_CACHE_HOME="${CONFIG_DIR}/.cache" XDG_DATA_HOME="${CONFIG_DIR}/.local/share" LANG="C.UTF-8" LC_ALL="C.UTF-8" S6_BEHAVIOUR_IF_STAGE2_FAILS=2 PS1="$(whoami)@$(hostname):$(pwd)\\$ "
-
+#FROM alpine:latest
+#ARG S6_VERSION=3.1.4.1
+#ARG S6_ARCH=x86_64
+#ENV APP_DIR="/app" CONFIG_DIR="/config" PUID="1000" PGID="1000" UMASK="022" TZ="ETC/UTC" ARGS="" XDG_CONFIG_HOME="${CONFIG_DIR}/.config" XDG_CACHE_HOME="${CONFIG_DIR}/.cache" XDG_DATA_HOME="${CONFIG_DIR}/.local/share" LANG="C.UTF-8" LC_ALL="C.UTF-8" S6_BEHAVIOUR_IF_STAGE2_FAILS=2 PS1="$(whoami)@$(hostname):$(pwd)\\$ "
 #RUN  set -xe && apk update && apk add --no-cache bash ca-certificates chromaprint coreutils curl expat findutils ffmpeg flac git gdbm gobject-introspection grep gst-plugins-good gstreamer icu-libs iputils jpeg jq lame libffi libpng libssl3 libxml2 libxslt mediainfo mpg123 nano openjpeg par2cmdline p7zip python3 sed shadow sqlite-libs tar tree tzdata unzip wget xz && apk upgrade --no-cache && mkdir "${APP_DIR}" && useradd -u 1000 -U -d "${CONFIG_DIR}" -s /bin/false agpsn && usermod -G users agpsn && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-arch.tar.xz" | tar -Jxpf - -C /
+#RUN  set -xe && apk update && apk add --no-cache bash ca-certificates coreutils curl findutils grep icu-libs iputils jq libxml2 libxslt mediainfo nano p7zip python3 sed shadow sqlite-libs tar tree tzdata unzip wget xz && apk upgrade --no-cache && mkdir "${APP_DIR}" && useradd -u 1000 -U -d "${CONFIG_DIR}" -s /bin/false agpsn && usermod -G users agpsn && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-arch.tar.xz" | tar -Jxpf - -C /
+#LABEL org.opencontainers.image.source=https://github.com/agpsn/base
+#VOLUME ["${CONFIG_DIR}"]
+#ENTRYPOINT ["/init"]
 
-RUN  set -xe && apk update && apk add --no-cache bash ca-certificates coreutils curl findutils grep icu-libs iputils jq libxml2 libxslt mediainfo nano p7zip python3 sed shadow sqlite-libs tar tree tzdata unzip wget xz && apk upgrade --no-cache && mkdir "${APP_DIR}" && useradd -u 1000 -U -d "${CONFIG_DIR}" -s /bin/false agpsn && usermod -G users agpsn && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-arch.tar.xz" | tar -Jxpf - -C /
 
-LABEL org.opencontainers.image.source=https://github.com/agpsn/base
+#####---#####
+FROM alpine:3.16 as rootfs-stage
 
-VOLUME ["${CONFIG_DIR}"]
+# environment
+ENV REL=v3.17
+ENV ARCH=x86_64
+ENV MIRROR=http://dl-cdn.alpinelinux.org/alpine
+ENV PACKAGES=alpine-baselayout,alpine-keys,apk-tools,busybox,libc-utils,xz
+
+# install packages
+RUN apk add --no-cache bash curl tzdata xz
+
+# fetch builder script from gliderlabs
+RUN curl -o /mkimage-alpine.bash -L https://raw.githubusercontent.com/gliderlabs/docker-alpine/master/builder/scripts/mkimage-alpine.bash && chmod +x /mkimage-alpine.bash && ./mkimage-alpine.bash  && mkdir /root-out && tar xf /rootfs.tar.xz -C /root-out && sed -i -e 's/^root::/root:!:/' /root-out/etc/shadow
+
+# set version for s6 overlay
+ARG S6_OVERLAY_VERSION="3.1.4.2"
+ARG S6_OVERLAY_ARCH="x86_64"
+
+# add s6 overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+RUN tar -C /root-out -Jxpf /tmp/s6-overlay-noarch.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz /tmp
+RUN tar -C /root-out -Jxpf /tmp/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz
+
+# add s6 optional symlinks
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz /tmp
+RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz /tmp
+RUN tar -C /root-out -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz
+
+
+# Runtime stage
+FROM scratch
+COPY --from=rootfs-stage /root-out/ /
+ARG BUILD_DATE
+ARG VERSION
+
+# environment variables
+ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " \
+HOME="/root" \
+TERM="xterm" \
+S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0" \
+S6_VERBOSITY=1 \
+S6_STAGE2_HOOK=/docker-mods
+
+RUN \
+  echo "**** install runtime packages ****" && \
+  apk add --no-cache alpine-release bash ca-certificates coreutils curl jq netcat-openbsd procps shadow tzdata && \
+  echo "**** create abc user and make our folders ****" && groupmod -g 1000 users && useradd -u 911 -U -d /config -s /bin/false abc && usermod -G users abc && mkdir -p /app /config /defaults && \
+  echo "**** cleanup ****" && rm -rf /tmp/*
+
+# add local files
+#COPY root/ /
 
 ENTRYPOINT ["/init"]
+
