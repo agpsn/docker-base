@@ -48,7 +48,7 @@ ENV PS1="$(whoami)@$(hostname):$(pwd)\\$ " HOME="/root" TERM="xterm" S6_CMD_WAIT
 #	echo "**** create abc user and make our folders ****" && groupmod -g 1000 users && useradd -u 911 -U -d /config -s /bin/false abc && usermod -G users abc && mkdir -p /app /config /defaults && \
 #	echo "**** cleanup ****" && rm -rf /tmp/*
 
-#RUN set -xe && apk update
+RUN set -xe && apk update
 #apk add --no-cache alpine-release bash ca-certificates coreutils curl icu-libs jq mediainfo nano p7zip procps python3 sed shadow sqlite-libs tar tree tzdata unzip wget xz && 
 #apk upgrade --no-cache && 
 #mkdir /app /config /defaults && 
