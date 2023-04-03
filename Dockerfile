@@ -38,4 +38,4 @@ ARG S6_VERSION=3.1.4.2
 ARG S6_ARCH=x86_64
 
 #RUN set -xe && apk update && apk add --no-cache coreutils curl shadow tzdata xz
-RUN set -xe && apk update && apk add --no-cache tzdata
+RUN set -xe && apk update && apk add --no-cache coreutils shadow tzdata xz
