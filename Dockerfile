@@ -7,7 +7,7 @@ ENV APP_DIR="/app" CONFIG_DIR="/config" PUID="1000" PGID="1000" UMASK="022" TZ="
 
 RUN set -xe && apk update && apk upgrade --no-cache && apk add --no-cache bash ca-certificates coreutils curl findutils grep jq mediainfo nano p7zip python3 sed shadow sqlite-libs tree tzdata unzip wget xz zip && mkdir "${APP_DIR}" && useradd -u 1000 -U -d "${CONFIG_DIR}" -s /bin/false agpsn && usermod -G users agpsn && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-noarch.tar.xz" | tar -Jxpf - -C / && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-symlinks-arch.tar.xz" | tar -Jxpf - -C /
 
-LABEL org.opencontainers.image.source=https://github.com/agpsn/docker-base
+LABEL org.opencontainers.image.source="https://github.com/agpsn/docker-base"
 
 VOLUME ["${CONFIG_DIR}"]
 
