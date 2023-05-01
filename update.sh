@@ -10,3 +10,4 @@ echo "Updating Base"
 docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/docker-base:alpine .
 git add . && git commit -am "Updated" && git push --quiet
 docker push --quiet ghcr.io/agpsn/docker-base:alpine
+echo ""
