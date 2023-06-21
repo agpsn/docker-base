@@ -7,9 +7,8 @@ AVERSION=$(docker run --rm alpine cat /etc/os-release | grep VERSION_ID | cut -f
 
 echo "Updating Base: v$AVERSION"
 
-docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/docker-base:alpine --tag ghcr.io/agpsn/docker-base:latest .
+docker build --quiet --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest .
 git tag -f $AVERSION && git push --quiet origin $AVERSION -f --tags
 git add . && git commit -am "Updated" && git push --quiet
-docker push --quiet ghcr.io/agpsn/docker-base:alpine
-docker push --quiet ghcr.io/agpsn/docker-base:latest && docker image rm --quiet ghcr.io/agpsn/docker-base:latest
+docker push --quiet ghcr.io/agpsn/alpine-base:latest
 echo ""
