@@ -23,5 +23,4 @@ docker push --quiet ghcr.io/agpsn/ubuntu-base:$UVERSION && docker image rm ghcr.
 echo ""
 
 git add . && git commit -am "Updated" && git push --quiet
-
 echo ""
