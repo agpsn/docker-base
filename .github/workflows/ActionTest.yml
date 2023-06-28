@@ -6,7 +6,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - uses: rickstaa/action-create-tag@v1
       - name: Set Variables
         run: |
           echo "AVERSION=$(docker run --rm alpine:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=')" >> $GITHUB_ENV
@@ -25,14 +24,14 @@ jobs:
           echo "Pushing Ubuntu Base: v${UVERSION}"
           docker push ghcr.io/agpsn/ubuntu-base:latest
           docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
-      - name: Github Tags (Alpine)
-        with:
-          tag: "${AVERSION}"
-          tag_exists_error: false
-      - name: Github Tags (Ubuntu)
-        with:
-          tag: "${AVERSION}"
-          tag_exists_error: false
+#      - name: Github Tags (Alpine)
+#        with:
+#          tag: "${AVERSION}"
+#          tag_exists_error: false
+#      - name: Github Tags (Ubuntu)
+#        with:
+#          tag: "${AVERSION}"
+#          tag_exists_error: false
 #         run: | 
 #           git tag -f $AVERSION && git push origin $AVERSION -f --tags
 #           git tag -f $UVERSION && git push origin $UVERSION -f --tags
