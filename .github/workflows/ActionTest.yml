@@ -1,4 +1,4 @@
-name: ActionTest-6
+name: ActionTest-7
 on: 
   workflow_dispatch:
 
@@ -45,10 +45,6 @@ jobs:
           docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
           echo "Building Ubuntu Base: v${UVERSION}"
           docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
-
-  PushImages:
-    runs-on: self-hosted
-    steps:
       - name: PushImages
         run: |
           echo "Pushing Alpine Base: v${AVERSION}"
@@ -57,10 +53,6 @@ jobs:
           echo "Pushing Ubuntu Base: v${UVERSION}"
           docker push ghcr.io/agpsn/ubuntu-base:latest
           docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
-          
-  GithubTags:
-    runs-on: self-hosted
-    steps:
       - uses: actions/checkout@v3
       - uses: rickstaa/action-create-tag@v1
         with:
