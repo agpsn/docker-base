@@ -25,10 +25,13 @@ jobs:
           echo "Pushing Ubuntu Base: v${UVERSION}"
           docker push ghcr.io/agpsn/ubuntu-base:latest
           docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
-      - name: Github Tags
+      - name: Github Tags (Alpine)
         with:
           tag: "${AVERSION}"
-          tag: "${UVERSION}"
+          tag_exists_error: false
+      - name: Github Tags (Ubuntu)
+        with:
+          tag: "${AVERSION}"
           tag_exists_error: false
 #         run: | 
 #           git tag -f $AVERSION && git push origin $AVERSION -f --tags
