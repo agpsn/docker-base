@@ -3,15 +3,14 @@ on:
   workflow_dispatch:
 
 jobs:
-
   BuildImages:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       id-token: write
-
     steps:
+
       - name: SetVariables
         run: |
           echo "AVERSION=$(docker run --pull=always --quiet --rm alpine:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=')" >> $GITHUB_ENV
@@ -43,21 +42,21 @@ jobs:
 #        with:
 #          images: |
 #            ghcr.io/agpsn/alpine-base:latest
-#            ghcr.io/agpsn/alpine-base:$AVERSION
+#            ghcr.io/agpsn/alpine-base:${AVERSION}
 #            ghcr.io/agpsn/ubuntu-base:latest
-#            ghcr.io/agpsn/ubuntu-base:$UVERSION
+#            ghcr.io/agpsn/ubuntu-base:${UVERSION}
 
       - name: BuildImages
         run: |
-          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
-          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest --tag ghcr.io/agpsn/alpine-base:${AVERSION} -f ./Dockerfile.alpine .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest --tag ghcr.io/agpsn/ubuntu-base:${UVERSION} -f ./Dockerfile.ubuntu .
           
       - name: PushImages
         run: |
           docker push ghcr.io/agpsn/alpine-base:latest
-          docker push ghcr.io/agpsn/alpine-base:$AVERSION
+          docker push ghcr.io/agpsn/alpine-base:${AVERSION}
           docker push ghcr.io/agpsn/ubuntu-base:latest
-          docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
+          docker push ghcr.io/agpsn/ubuntu-base:${UVERSION}
           
 #      - name: Tags
 #        run: |
