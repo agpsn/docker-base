@@ -24,4 +24,4 @@ jobs:
       - name: Test Results
         run: |
           echo "${AVERSION}"
-          echo "${UVERSION}
+          echo "${UVERSION}"
