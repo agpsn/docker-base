@@ -11,29 +11,25 @@ jobs:
         run: |
           echo "AVERSION=$(docker run --rm alpine:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=')" >> $GITHUB_ENV
           echo "UVERSION=$(docker run --rm ubuntu:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=' | cut -f2 -d"\"")" >> $GITHUB_ENV
-#      - name: Test Results
-#        run: |
-#          echo "${AVERSION}"
-#          echo "${UVERSION}"
-       - name: Build Images
-         run: |
-           echo "Building Alpine Base: v${AVERSION}"
-           docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
-           echo "Building Ubuntu Base: v${UVERSION}"
-           docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
-       - name: Pushing Images
-         run: |
-           echo "Pushing Alpine Base: v${AVERSION}"
-           docker push ghcr.io/agpsn/alpine-base:latest
-           docker push ghcr.io/agpsn/alpine-base:$AVERSION
-           echo "Pushing Ubuntu Base: v${UVERSION}"
-           docker push ghcr.io/agpsn/ubuntu-base:latest
-           docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
-       - name: Github Tags
-         with:
-           tag: "${AVERSION}"
-           tag: "${UVERSION}"
-           tag_exists_error: false
+      - name: Build Images
+        run: |
+          echo "Building Alpine Base: v${AVERSION}"
+          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
+          echo "Building Ubuntu Base: v${UVERSION}"
+          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
+      - name: Pushing Images
+        run: |
+          echo "Pushing Alpine Base: v${AVERSION}"
+          docker push ghcr.io/agpsn/alpine-base:latest
+          docker push ghcr.io/agpsn/alpine-base:$AVERSION
+          echo "Pushing Ubuntu Base: v${UVERSION}"
+          docker push ghcr.io/agpsn/ubuntu-base:latest
+          docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
+      - name: Github Tags
+        with:
+          tag: "${AVERSION}"
+          tag: "${UVERSION}"
+          tag_exists_error: false
 #         run: | 
 #           git tag -f $AVERSION && git push origin $AVERSION -f --tags
 #           git tag -f $UVERSION && git push origin $UVERSION -f --tags
