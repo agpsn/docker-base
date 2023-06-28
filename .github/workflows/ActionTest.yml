@@ -1,6 +1,14 @@
-name: ActionTest-3
+name: ActionTest-5
 on: 
   workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_1a: ghcr.io/agpsn/alpine-base:latest
+  IMAGE_NAME_1b: ghcr.io/agpsn/alpine-base:$AVERSION
+  IMAGE_NAME_2a: ghcr.io/agpsn/ubuntu-base:latest
+  IMAGE_NAME_2b: ghcr.io/agpsn/ubuntu-base:$UVERSION
+
 jobs:
 
   SetVariables:
@@ -13,7 +21,36 @@ jobs:
 
   BuildImages:
     runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
+        with:
+          cosign-release: 'v1.13.1'
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: |
+            ghcr.io/agpsn/alpine-base:latest
+            ghcr.io/agpsn/alpine-base:$AVERSION
+            ghcr.io/agpsn/ubuntu-base:latest
+            ghcr.io/agpsn/ubuntu-base:$UVERSION
       - name: BuildImages
         run: |
           echo "Building Alpine Base: v${AVERSION}"
