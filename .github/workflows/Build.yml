@@ -67,11 +67,16 @@ jobs:
 #           git tag -f $UVERSION && git push origin $UVERSION -f --tags
 
       - uses: rickstaa/action-create-tag@v1
-        id: "tag_create"
         with:
-          tag: |
-            "${AVERSION}"
-            "${UVERSION}"
+          tag: "${AVERSION}"
+          tag_exists_error: false
+          message: "Latest release"
+      -  run: |
+          echo "Tag already present: ${{ env.TAG_EXISTS }}"
+          
+      - uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "${UVERSION}"
           tag_exists_error: false
           message: "Latest release"
       -  run: |
