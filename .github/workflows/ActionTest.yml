@@ -1,4 +1,4 @@
-name: ActionTest
+name: ActionTest-2
 on: 
   workflow_dispatch:
 jobs:
