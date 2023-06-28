@@ -4,7 +4,7 @@ on:
 
 jobs:
 
-  run:
+  BuildImages:
     runs-on: self-hosted
     permissions:
       contents: read
@@ -66,21 +66,21 @@ jobs:
 #           git tag -f $AVERSION && git push origin $AVERSION -f --tags
 #           git tag -f $UVERSION && git push origin $UVERSION -f --tags
 
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: "${AVERSION}"
-          tag_exists_error: false
-          message: "Latest release"
-      -  run: |
-          echo "Tag already present: ${{ env.TAG_EXISTS }}"
+#      - uses: rickstaa/action-create-tag@v1
+#        with:
+#          tag: "${AVERSION}"
+#          tag_exists_error: false
+#          message: "Latest release"
+#      -  run: |
+#          echo "Tag already present: ${{ env.TAG_EXISTS }}"
           
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: "${UVERSION}"
-          tag_exists_error: false
-          message: "Latest release"
-      -  run: |
-          echo "Tag already present: ${{ env.TAG_EXISTS }}"
+#      - uses: rickstaa/action-create-tag@v1
+#        with:
+#          tag: "${UVERSION}"
+#          tag_exists_error: false
+#          message: "Latest release"
+#      -  run: |
+#          echo "Tag already present: ${{ env.TAG_EXISTS }}"
           
 #      - name: Commit Changes
 #        run: |
