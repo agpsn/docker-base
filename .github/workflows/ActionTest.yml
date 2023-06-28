@@ -14,8 +14,8 @@ jobs:
         run: |
           echo "AVERSION=$(docker run --rm alpine:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=')" >> $GITHUB_ENV
           echo "UVERSION=$(docker run --rm ubuntu:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=' | cut -f2 -d"\"")" >> $GITHUB_ENV
-      - name: Checkout repository
-        uses: actions/checkout@v3
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@v3
