@@ -36,13 +36,11 @@ jobs:
   GithubTags:
     runs-on: self-hosted
     steps:
-      - name: GithubTags-Ubuntu
       - uses: actions/checkout@v3
       - uses: rickstaa/action-create-tag@v1
         with:
           tag: "{AVERSION}"
           tag_exists_error: false
-      - name: GithubTags-Ubuntu
       - uses: actions/checkout@v3
       - uses: rickstaa/action-create-tag@v1
         with:
