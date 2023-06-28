@@ -1,0 +1,14 @@
+name: ActionTest
+on: 
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set env
+      run: echo "GITHUB_SHA_SHORT=$(echo this-is-set)" >> $GITHUB_ENV
+
+    - name: Test
+      run: echo $GITHUB_SHA_SHORT
