@@ -1,0 +1,18 @@
+name: DockerBuild
+
+on:
+  schedule:
+  - cron: "0 0 * * 0"
+# pull_request:
+#   branches: [ "master" ]
+# push:
+#   branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run:  bash ./update.sh
+      shell: bash
