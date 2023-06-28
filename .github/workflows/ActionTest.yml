@@ -1,9 +1,9 @@
-name: ActionTest-9
+name: ActionTest-1
 on: 
   workflow_dispatch:
 
 jobs:
-  TESTING2:
+  TESTING:
     runs-on: self-hosted
     permissions:
       contents: read
@@ -41,16 +41,15 @@ jobs:
             ghcr.io/agpsn/ubuntu-base:$UVERSION
       - name: BuildImages
         run: |
-          echo "Building Alpine Base: v${AVERSION}"
-          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
-          echo "Building Ubuntu Base: v${UVERSION}"
-          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest -f ./Dockerfile.alpine .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest -f ./Dockerfile.ubuntu .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
+          
       - name: PushImages
         run: |
-          echo "Pushing Alpine Base: v${AVERSION}"
           docker push ghcr.io/agpsn/alpine-base:latest
           docker push ghcr.io/agpsn/alpine-base:$AVERSION
-          echo "Pushing Ubuntu Base: v${UVERSION}"
           docker push ghcr.io/agpsn/ubuntu-base:latest
           docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
       - uses: actions/checkout@v3
