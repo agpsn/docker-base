@@ -1,9 +1,9 @@
-name: ActionTest-1c
+name: DockerBuildX
 on: 
   workflow_dispatch:
 
 jobs:
-  TESTING:
+  run:
     runs-on: self-hosted
     permissions:
       contents: read
@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: SetVariables
         run: |
-          echo "AVERSION=$(docker run --rm alpine:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=')" >> $GITHUB_ENV
-          echo "UVERSION=$(docker run --rm ubuntu:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=' | cut -f2 -d"\"")" >> $GITHUB_ENV
+          echo "AVERSION=$(docker run --pull=always --quiet --rm alpine:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=')" >> $GITHUB_ENV
+          echo "UVERSION=$(docker run --pull=always --quiet --rm ubuntu:latest cat /etc/os-release | grep VERSION_ID | cut -f2 -d'=' | cut -f2 -d"\"")" >> $GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install cosign
@@ -52,27 +52,11 @@ jobs:
           docker push ghcr.io/agpsn/alpine-base:$AVERSION
           docker push ghcr.io/agpsn/ubuntu-base:latest
           docker push ghcr.io/agpsn/ubuntu-base:$UVERSION
-      - uses: actions/checkout@v3
-#      - uses: rickstaa/action-create-tag@v1
-#        with:
-#          tag: "{AVERSION}"
-#          tag_exists_error: false
-#      - uses: actions/checkout@v3
-#      - uses: rickstaa/action-create-tag@v1
-#        with:
-#          tag: "{UVERSION}"
-#          tag_exists_error: false
-#      - name: Github Tags (Alpine)
-#        with:
-#          tag: "${AVERSION}"
-#          tag_exists_error: false
-#      - name: Github Tags (Ubuntu)
-#        with:
-#          tag: "${AVERSION}"
-#          tag_exists_error: false
-#         run: | 
-#           git tag -f $AVERSION && git push origin $AVERSION -f --tags
-#           git tag -f $UVERSION && git push origin $UVERSION -f --tags
-#       - name: Commit Changes
-#         run: |
-#           git add . && git commit -am "Updated" && git push --quiet
+          
+      - name: Tags
+        run: |
+           git tag -f $AVERSION && git push origin $AVERSION -f --tags
+           git tag -f $UVERSION && git push origin $UVERSION -f --tags
+#      - name: Commit Changes
+#        run: |
+#          git add . && git commit -am "Updated" && git push --quiet
