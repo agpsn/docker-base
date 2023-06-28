@@ -20,11 +20,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-#      - name: Install cosign
-#        if: github.event_name != 'pull_request'
-#        uses: sigstore/cosign-installer@v3
-#        with:
-#          cosign-release: 'v1.13.1'
+      - name: Install cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v1.13.1'
 
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
@@ -49,10 +49,8 @@ jobs:
 
       - name: BuildImages
         run: |
-          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest -f ./Dockerfile.alpine .
-          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
-          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest -f ./Dockerfile.ubuntu .
-          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/alpine-base:latest --tag ghcr.io/agpsn/alpine-base:$AVERSION -f ./Dockerfile.alpine .
+          docker build --force-rm --rm --tag ghcr.io/agpsn/ubuntu-base:latest --tag ghcr.io/agpsn/ubuntu-base:$UVERSION -f ./Dockerfile.ubuntu .
           
       - name: PushImages
         run: |
